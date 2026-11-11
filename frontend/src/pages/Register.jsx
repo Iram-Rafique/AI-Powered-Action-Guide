@@ -1,11 +1,16 @@
 
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import AuthLayout from '../layouts/AuthLayout'
+import { registerUser } from '../services/authService'
 
 function Register() {
+  const navigate = useNavigate()
+
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [serverError, setServerError] = useState('')
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -27,9 +32,11 @@ function Register() {
       ...prev,
       [name]: '',
     }))
+
+    setServerError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     const newErrors = {}
@@ -38,7 +45,7 @@ function Register() {
       newErrors.fullName = 'Please enter your full name.'
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       newErrors.email = 'Please enter a valid email address.'
     }
 
@@ -47,9 +54,37 @@ function Register() {
     }
 
     setErrors(newErrors)
+    setServerError('')
 
-    if (Object.keys(newErrors).length === 0) {
-      console.log('Registration details validated.')
+    if (Object.keys(newErrors).length > 0) {
+      return
+    }
+
+    try {
+      setIsLoading(true)
+
+      const data = await registerUser({
+        ...formData,
+        email: formData.email.trim(),
+      })
+
+      navigate('/login', {
+        state: {
+          successMessage: data.message,
+        },
+      })
+    } catch (error) {
+      if (error.status === 409) {
+        setErrors({
+          email: error.message,
+        })
+      } else {
+        setServerError(
+          error.message || 'Unable to register. Please try again.'
+        )
+      }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -78,7 +113,10 @@ function Register() {
 
           {/* Full Name */}
           <div>
-            <label htmlFor="fullName" className="mb-2 block text-sm font-semibold text-slate-700">
+            <label
+              htmlFor="fullName"
+              className="mb-2 block text-sm font-semibold text-slate-700"
+            >
               Full name
             </label>
 
@@ -92,11 +130,12 @@ function Register() {
               autoComplete="name"
               required
               aria-invalid={Boolean(errors.fullName)}
+              aria-describedby={errors.fullName ? 'fullName-error' : undefined}
               className={inputClass('fullName')}
             />
 
             {errors.fullName && (
-              <p className="mt-1 text-xs text-red-700">
+              <p id="fullName-error" className="mt-1 text-xs text-red-700">
                 {errors.fullName}
               </p>
             )}
@@ -104,7 +143,10 @@ function Register() {
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-semibold text-slate-700">
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-semibold text-slate-700"
+            >
               Email address
             </label>
 
@@ -118,11 +160,12 @@ function Register() {
               autoComplete="email"
               required
               aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? 'email-error' : undefined}
               className={inputClass('email')}
             />
 
             {errors.email && (
-              <p className="mt-1 text-xs text-red-700">
+              <p id="email-error" className="mt-1 text-xs text-red-700">
                 {errors.email}
               </p>
             )}
@@ -130,7 +173,10 @@ function Register() {
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">
+            <label
+              htmlFor="password"
+              className="mb-2 block text-sm font-semibold text-slate-700"
+            >
               Password
             </label>
 
@@ -145,6 +191,7 @@ function Register() {
                 autoComplete="new-password"
                 required
                 aria-invalid={Boolean(errors.password)}
+                aria-describedby="password-hint"
                 className={`${inputClass('password')} pr-12`}
               />
 
@@ -159,7 +206,7 @@ function Register() {
               </button>
             </div>
 
-            <p className="mt-1.5 text-xs text-slate-600">
+            <p id="password-hint" className="mt-1.5 text-xs text-slate-600">
               Use at least 8 characters.
             </p>
 
@@ -170,12 +217,23 @@ function Register() {
             )}
           </div>
 
+          {/* Server Error */}
+          {serverError && (
+            <p
+              role="alert"
+              className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
+            >
+              {serverError}
+            </p>
+          )}
+
           {/* Submit */}
           <button
             type="submit"
-            className="h-12 w-full rounded-lg bg-[#17324D] px-4 text-sm font-semibold text-white transition hover:bg-[#244766] focus:outline-none focus:ring-2 focus:ring-[#17324D] focus:ring-offset-2 active:scale-[0.99]"
+            disabled={isLoading}
+            className="h-12 w-full rounded-lg bg-[#17324D] px-4 text-sm font-semibold text-white transition hover:bg-[#244766] focus:outline-none focus:ring-2 focus:ring-[#17324D] focus:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Create account
+            {isLoading ? 'Creating account...' : 'Create account'}
           </button>
 
         </form>
