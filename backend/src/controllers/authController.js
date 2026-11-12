@@ -1,6 +1,7 @@
 
 import bcrypt from 'bcrypt'
 import prisma from '../config.js'
+import jwt from 'jsonwebtoken'
 
 export const registerUser = async (req, res) => {
   try {
@@ -69,6 +70,71 @@ export const registerUser = async (req, res) => {
 
     return res.status(500).json({
       message: 'Unable to create your account. Please try again.',
+    })
+  }
+}
+
+// for login 
+
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body
+
+    // Validate required fields
+    if (!email?.trim() || !password) {
+      return res.status(400).json({
+        message: 'Please provide your email and password.',
+      })
+    }
+
+    // Find user by email
+    const user = await prisma.users.findUnique({
+      where: {
+        email: email.trim().toLowerCase(),
+      },
+    })
+
+    // Check whether the user exists
+    if (!user) {
+      return res.status(401).json({
+        message: 'Invalid email or password.',
+      })
+    }
+
+    // Compare submitted password with stored password hash
+    const passwordMatches = await bcrypt.compare(
+      password,
+      user.password_hash
+    )
+
+    if (!passwordMatches) {
+      return res.status(401).json({
+        message: 'Invalid email or password.',
+      })
+    }
+
+    // Create JWT token
+    const token = jwt.sign(
+      { userId: user.user_id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    )
+
+    // Return token and user details
+    return res.status(200).json({
+      message: 'Login successful.',
+      token,
+      user: {
+        user_id: user.user_id,
+        name: user.name,
+        email: user.email,
+      },
+    })
+  } catch (error) {
+    console.error('Login error:', error)
+
+    return res.status(500).json({
+      message: 'Unable to log in. Please try again.',
     })
   }
 }

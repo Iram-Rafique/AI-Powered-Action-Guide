@@ -38,7 +38,7 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
+if (isLoading) return
     const newErrors = {}
 
     if (!formData.fullName.trim()) {
@@ -62,6 +62,7 @@ function Register() {
 
     try {
       setIsLoading(true)
+ 
 
       const data = await registerUser({
         ...formData,
@@ -95,11 +96,11 @@ function Register() {
 
   return (
     <AuthLayout>
-      <section className="w-full max-w-[460px] rounded-xl border border-[#D7DEE8] bg-[#F7F9FC] p-6 sm:p-8 md:p-10">
+      <section className="w-full max-w-[460px] rounded-xl border border-[#D7DEE8] bg-white p-6 shadow-[0_4px_20px_rgba(23,50,77,0.08)] sm:p-8 md:p-10">
 
         {/* Heading */}
         <div className="mb-8 text-center">
-          <h1 className="text-xl font-bold tracking-tight text-[#17324D] sm:text-2xl">
+          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
             Create your account
           </h1>
 
@@ -191,7 +192,11 @@ function Register() {
                 autoComplete="new-password"
                 required
                 aria-invalid={Boolean(errors.password)}
-                aria-describedby="password-hint"
+           aria-describedby={
+  errors.password
+    ? 'password-hint password-error'
+    : 'password-hint'
+}
                 className={`${inputClass('password')} pr-12`}
               />
 
