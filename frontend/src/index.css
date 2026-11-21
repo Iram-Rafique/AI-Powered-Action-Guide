@@ -16,6 +16,7 @@ body {
 
 body {
   font-family: "DM Sans", sans-serif;
+  background-color: white;
 }
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

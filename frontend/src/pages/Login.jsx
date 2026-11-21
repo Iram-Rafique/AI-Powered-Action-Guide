@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
@@ -67,6 +66,7 @@ function Login() {
         email: formData.email.trim(),
         password: formData.password,
       })
+
       localStorage.setItem('token', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
 
@@ -95,15 +95,17 @@ function Login() {
   }
 
   const inputClass = (field) =>
-    `h-12 w-full rounded-lg border bg-transparent px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#17324D] focus:ring-0 autofill:bg-transparent ${errors[field] ? 'border-red-500' : 'border-[#D7DEE8]'
+    `h-12 w-full rounded-lg border bg-white px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#263746] focus:ring-2 focus:ring-[#263746]/10 ${
+      errors[field] ? 'border-red-500' : 'border-slate-300'
     }`
+
   return (
     <AuthLayout>
-      <section className="w-full max-w-[460px] rounded-xl border border-[#D7DEE8] p-6 sm:p-8 md:p-10">
+      <section className="w-full max-w-[460px] rounded-xl border border-slate-200 bg-white p-6 shadow-[0_4px_20px_rgba(38,55,70,0.08)] sm:p-8 md:p-10">
 
         {/* Heading */}
         <div className="mb-8 text-center">
-          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
+          <h1 className="text-xl font-bold tracking-tight text-[#263746] sm:text-2xl">
             Welcome back
           </h1>
 
@@ -113,14 +115,15 @@ function Login() {
         </div>
 
         {/* Registration Success Message */}
-        {successMessage && (
-          <div
-            role="status"
-            className="mb-6 rounded-lg border border-[#168C83]/30  px-4 py-3 text-sm text-[#116B65]"
-          >
-            {successMessage}
-          </div>
-        )}
+   {/* Registration Success Message */}
+{successMessage && (
+  <div
+    role="status"
+    className="mb-6 rounded-lg bg-[#0F766E]/5 px-4 py-3 text-sm font-medium text-[#0F766E]"
+  >
+    {successMessage}
+  </div>
+)}
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
@@ -184,7 +187,7 @@ function Login() {
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 aria-pressed={showPassword}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-[#168C83] transition hover:text-[#116B65] focus:outline-none focus:ring-2 focus:ring-[#168C83]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-[#263746] transition hover:text-[#0F766E] focus:outline-none focus:ring-2 focus:ring-[#0F766E]"
               >
                 {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
               </button>
@@ -211,7 +214,7 @@ function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="h-12 w-full rounded-lg bg-[#17324D] px-4 text-sm font-semibold text-white transition hover:bg-[#244766] focus:outline-none focus:ring-2 focus:ring-[#17324D] focus:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
+            className="h-12 w-full rounded-lg bg-[#0F766E] px-4 text-sm font-semibold text-white transition hover:bg-[#115E59] focus:outline-none focus:ring-2 focus:ring-[#0F766E] focus:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isLoading ? 'Logging in...' : 'Log in'}
           </button>
@@ -223,7 +226,7 @@ function Login() {
           Don't have an account?{' '}
           <Link
             to="/register"
-            className="font-semibold text-[#168C83] transition hover:text-[#116B65] hover:underline"
+            className="font-semibold text-[#0F766E] transition hover:text-[#115E59] hover:underline"
           >
             Register
           </Link>
