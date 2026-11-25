@@ -1,28 +1,59 @@
-/* @import "tailwindcss";
+@import "tailwindcss";
 
-
-@theme {
-  --font-sans: "Inter", sans-serif;
-}
-
-body {
-  font-family: "Inter", sans-serif;
-} */
- @import "tailwindcss";
-
+/*
+  Action Guide colour scheme: warm navy and coral.
+  Every colour in the app is defined here. Tailwind turns each one into
+  classes automatically, e.g. --color-navy -> bg-navy, text-navy, border-navy.
+  To change a colour across the whole app, change it here only.
+  All text colours meet WCAG 2.2 AA contrast (at least 4.5:1).
+*/
 @theme {
   --font-sans: "DM Sans", sans-serif;
+
+  /* Brand */
+  --color-ink: #1E2A44;          /* header, footer, headings, main text */
+  --color-navy: #1E3A5F;         /* primary buttons */
+  --color-navy-hover: #162C48;   /* primary button hover */
+  --color-coral: #F2715A;        /* accents only: icons, borders, highlights (not for text) */
+  --color-coral-text: #B4432C;   /* coral for links and text (5.6:1 on white) */
+
+  /* Neutrals */
+  --color-cream: #FAF7F2;        /* page background */
+  --color-sand: #EAE4DA;         /* card borders and dividers */
+  --color-field: #948C84;        /* form input borders (3.3:1, visible) */
+  --color-muted: #57534E;        /* secondary text */
+  --color-subtle: #78716C;       /* hints and placeholders */
+
+  /* Status: urgent / overdue / errors */
+  --color-urgent: #9F1239;
+  --color-urgent-bg: #FFF1F2;
+  --color-urgent-border: #FECDD3;
+
+  /* Status: due soon */
+  --color-soon: #B45309;
+  --color-soon-bg: #FFFBEB;
+  --color-soon-border: #FDE68A;
+
+  /* Status: done / success */
+  --color-done: #15803D;
+  --color-done-bg: #F0FDF4;
+  --color-done-border: #BBF7D0;
+
+  /* Status: no date / check the letter */
+  --color-nodate-bg: #F5F2EC;
 }
 
 body {
-  font-family: "DM Sans", sans-serif;
-  background-color: white;
+  font-family: var(--font-sans);
+  background-color: var(--color-cream);
+  color: var(--color-ink);
 }
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
-  -webkit-text-fill-color: #1e293b !important;
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
+  -webkit-text-fill-color: var(--color-ink) !important;
   transition: background-color 9999s ease-in-out 0s;
 }

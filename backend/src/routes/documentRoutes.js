@@ -6,6 +6,7 @@ import {
   listDocuments,
   getDocument,
   updateActionStatus,
+  deleteDocument,
 } from '../controllers/documentController.js'
 
 const router = express.Router()
@@ -17,5 +18,6 @@ router.post('/upload', uploadDocument, uploadAndProcess)
 router.get('/', listDocuments)
 router.patch('/items/:itemId', updateActionStatus)
 router.get('/:id', getDocument)
+router.delete('/:id', deleteDocument)
 
 export default router

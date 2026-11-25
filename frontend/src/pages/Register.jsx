@@ -90,21 +90,22 @@ function Register() {
   }
 
   const inputClass = (field) =>
-    `h-12 w-full rounded-lg border bg-white px-4 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#263746] focus:ring-2 focus:ring-[#263746]/10 ${
-      errors[field] ? 'border-red-500' : 'border-slate-300'
+    `h-12 w-full rounded-lg border bg-white px-4 text-sm text-ink outline-none transition placeholder:text-subtle focus:border-navy focus:ring-2 focus:ring-navy/15 ${
+      errors[field] ? 'border-urgent' : 'border-field'
     }`
 
   return (
     <AuthLayout>
-      <section className="w-full max-w-[460px] rounded-xl border border-slate-200 bg-white p-6 shadow-[0_4px_20px_rgba(38,55,70,0.08)] sm:p-8 md:p-10">
+      <section className="w-full max-w-[460px] rounded-2xl border border-sand bg-white p-6 shadow-[0_8px_30px_rgba(30,42,68,0.08)] sm:p-8 md:p-10">
 
         {/* Heading */}
         <div className="mb-8 text-center">
-          <h1 className="text-xl font-bold tracking-tight text-[#263746] sm:text-2xl">
+          <div className="mx-auto mb-4 h-1 w-12 rounded-full bg-coral" aria-hidden="true" />
+          <h1 className="text-xl font-bold tracking-tight text-ink sm:text-2xl">
             Create your account
           </h1>
 
-          <p className="mt-2 text-sm leading-6 text-slate-600">
+          <p className="mt-2 text-sm leading-6 text-muted">
             Get started with your personal Action Guide.
           </p>
         </div>
@@ -116,7 +117,7 @@ function Register() {
           <div>
             <label
               htmlFor="fullName"
-              className="mb-2 block text-sm font-semibold text-slate-700"
+              className="mb-2 block text-sm font-semibold text-ink"
             >
               Full name
             </label>
@@ -136,7 +137,7 @@ function Register() {
             />
 
             {errors.fullName && (
-              <p id="fullName-error" className="mt-1 text-xs text-red-700">
+              <p id="fullName-error" className="mt-1 text-xs text-urgent">
                 {errors.fullName}
               </p>
             )}
@@ -146,7 +147,7 @@ function Register() {
           <div>
             <label
               htmlFor="email"
-              className="mb-2 block text-sm font-semibold text-slate-700"
+              className="mb-2 block text-sm font-semibold text-ink"
             >
               Email address
             </label>
@@ -166,7 +167,7 @@ function Register() {
             />
 
             {errors.email && (
-              <p id="email-error" className="mt-1 text-xs text-red-700">
+              <p id="email-error" className="mt-1 text-xs text-urgent">
                 {errors.email}
               </p>
             )}
@@ -176,7 +177,7 @@ function Register() {
           <div>
             <label
               htmlFor="password"
-              className="mb-2 block text-sm font-semibold text-slate-700"
+              className="mb-2 block text-sm font-semibold text-ink"
             >
               Password
             </label>
@@ -205,18 +206,18 @@ function Register() {
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 aria-pressed={showPassword}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-[#263746] transition hover:text-[#0F766E] focus:outline-none focus:ring-2 focus:ring-[#0F766E]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-muted transition hover:text-ink focus:outline-none focus:ring-2 focus:ring-navy"
               >
                 {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
               </button>
             </div>
 
-            <p id="password-hint" className="mt-1.5 text-xs text-slate-600">
+            <p id="password-hint" className="mt-1.5 text-xs text-muted">
               Use at least 8 characters.
             </p>
 
             {errors.password && (
-              <p id="password-error" className="mt-1 text-xs text-red-700">
+              <p id="password-error" className="mt-1 text-xs text-urgent">
                 {errors.password}
               </p>
             )}
@@ -226,7 +227,7 @@ function Register() {
           {serverError && (
             <p
               role="alert"
-              className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
+              className="rounded-lg border border-urgent-border bg-urgent-bg px-3 py-2 text-sm text-urgent"
             >
               {serverError}
             </p>
@@ -236,7 +237,7 @@ function Register() {
           <button
             type="submit"
             disabled={isLoading}
-            className="h-12 w-full rounded-lg bg-[#0F766E] px-4 text-sm font-semibold text-white transition hover:bg-[#115E59] focus:outline-none focus:ring-2 focus:ring-[#0F766E] focus:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
+            className="h-12 w-full rounded-lg bg-navy px-4 text-sm font-semibold text-white transition hover:bg-navy-hover focus:outline-none focus:ring-2 focus:ring-navy focus:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isLoading ? 'Creating account...' : 'Create account'}
           </button>
@@ -244,11 +245,11 @@ function Register() {
         </form>
 
         {/* Login Link */}
-        <p className="mt-7 text-center text-sm text-slate-700">
+        <p className="mt-7 text-center text-sm text-muted">
           Already have an account?{' '}
           <Link
             to="/login"
-            className="font-semibold text-[#0F766E] transition hover:text-[#115E59] hover:underline"
+            className="font-semibold text-coral-text underline-offset-4 transition hover:underline"
           >
             Log in
           </Link>

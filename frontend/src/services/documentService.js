@@ -1,4 +1,3 @@
-
 // Document requests
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -68,4 +67,13 @@ export const updateActionStatus = async (itemId, actionStatus) => {
   })
 
   return handleResponse(response, 'Unable to update this action.')
+}
+
+export const deleteDocument = async (documentId) => {
+  const response = await fetch(`${API_URL}/api/documents/${documentId}`, {
+    method: 'DELETE',
+    headers: authHeader(),
+  })
+
+  return handleResponse(response, 'Unable to delete this document.')
 }

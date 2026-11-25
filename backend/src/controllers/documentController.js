@@ -1,4 +1,3 @@
-
 import prisma from '../config.js'
 import { extractText, isImage, hasEnoughText } from '../services/textExtractor.js'
 import { extractWithGemini } from '../services/geminiService.js'
@@ -88,14 +87,66 @@ export const uploadAndProcess = async (req, res) => {
 }
 
 // GET /api/documents
+// Returns the user's documents with a progress summary for each one, so the
+// My Documents page can show progress, the next deadline and the summary strip.
 export const listDocuments = async (req, res) => {
   const documents = await prisma.documents.findMany({
     where: { user_id: req.userId },
     orderBy: { upload_date: 'desc' },
-    include: { _count: { select: { extracted_items: true } } },
+    include: {
+      extracted_items: {
+        select: { item_type: true, action_status: true, due_date: true },
+      },
+    },
   })
 
-  return res.json({ documents })
+  const summaries = documents.map(({ extracted_items: items, ...document }) => {
+    const actions = items.filter((item) => item.item_type === 'action')
+    const pending = actions.filter((item) => item.action_status !== 'completed')
+
+    return {
+      ...document,
+      item_count: items.length,
+      action_count: actions.length,
+      done_count: actions.length - pending.length,
+      // Due dates of actions that are not completed yet, earliest first
+      pending_due_dates: pending
+        .map((item) => item.due_date)
+        .filter(Boolean)
+        .sort((a, b) => a - b),
+    }
+  })
+
+  return res.json({ documents: summaries })
+}
+
+// DELETE /api/documents/:id
+// Deletes a document and its extracted items (FR8).
+export const deleteDocument = async (req, res) => {
+  const documentId = Number(req.params.id)
+
+  if (!Number.isInteger(documentId)) {
+    return res.status(400).json({ message: 'Invalid document ID.' })
+  }
+
+  // Only delete the document if it belongs to the logged-in user
+  const document = await prisma.documents.findFirst({
+    where: { document_id: documentId, user_id: req.userId },
+    select: { document_id: true },
+  })
+
+  if (!document) {
+    return res.status(404).json({ message: 'Document not found.' })
+  }
+
+  // The items must be removed before the document (foreign key),
+  // and the transaction makes sure both are deleted or neither is.
+  await prisma.$transaction([
+    prisma.extracted_items.deleteMany({ where: { document_id: documentId } }),
+    prisma.documents.delete({ where: { document_id: documentId } }),
+  ])
+
+  return res.json({ message: 'Document deleted.' })
 }
 
 // GET /api/documents/:id
