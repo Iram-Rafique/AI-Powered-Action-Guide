@@ -77,3 +77,26 @@ export const deleteDocument = async (documentId) => {
 
   return handleResponse(response, 'Unable to delete this document.')
 }
+
+// Edit an item's text and due date (dueDate is "YYYY-MM-DD" or "" for no date)
+export const editItem = async (itemId, description, dueDate) => {
+  const response = await fetch(`${API_URL}/api/documents/items/${itemId}`, {
+    method: 'PUT',
+    headers: {
+      ...authHeader(),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ description, due_date: dueDate || null }),
+  })
+
+  return handleResponse(response, 'Unable to save your changes.')
+}
+
+export const deleteItem = async (itemId) => {
+  const response = await fetch(`${API_URL}/api/documents/items/${itemId}`, {
+    method: 'DELETE',
+    headers: authHeader(),
+  })
+
+  return handleResponse(response, 'Unable to remove this item.')
+}
