@@ -78,15 +78,15 @@ export const deleteDocument = async (documentId) => {
   return handleResponse(response, 'Unable to delete this document.')
 }
 
-// Edit an item's text and due date (dueDate is "YYYY-MM-DD" or "" for no date)
-export const editItem = async (itemId, description, dueDate) => {
+// Edit an item. fields: { description, due_date ("YYYY-MM-DD" or ""), item_type, action_status }
+export const editItem = async (itemId, fields) => {
   const response = await fetch(`${API_URL}/api/documents/items/${itemId}`, {
     method: 'PUT',
     headers: {
       ...authHeader(),
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ description, due_date: dueDate || null }),
+    body: JSON.stringify({ ...fields, due_date: fields.due_date || null }),
   })
 
   return handleResponse(response, 'Unable to save your changes.')
@@ -99,4 +99,28 @@ export const deleteItem = async (itemId) => {
   })
 
   return handleResponse(response, 'Unable to remove this item.')
+}
+
+// Emails the Action Guide to the logged-in user's own address
+export const emailDocument = async (documentId) => {
+  const response = await fetch(`${API_URL}/api/documents/${documentId}/email`, {
+    method: 'POST',
+    headers: authHeader(),
+  })
+
+  return handleResponse(response, 'We could not send the email. Please try again later.')
+}
+
+// Asks a question about one document. messages: [{ role: 'user' | 'assistant', text }]
+export const askDocument = async (documentId, messages) => {
+  const response = await fetch(`${API_URL}/api/documents/${documentId}/chat`, {
+    method: 'POST',
+    headers: {
+      ...authHeader(),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ messages }),
+  })
+
+  return handleResponse(response, 'The assistant is busy right now. Please try again in a moment.')
 }
